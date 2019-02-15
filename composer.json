@@ -1,12 +1,12 @@
 {
-    "name": "aliasproject/wp-routes",
+    "name": "aliasproject/wp-route",
     "type": "library",
     "description": "Package for WordPress Routing",
     "keywords": [
         "aliasproject",
-        "wp-routes"
+        "wp-route"
     ],
-    "homepage": "https://github.com/aliasproject/wp-routes",
+    "homepage": "https://github.com/aliasproject/wp-route",
     "license": "MIT",
     "authors": [
         {
