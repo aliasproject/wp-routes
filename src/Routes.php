@@ -1,6 +1,6 @@
-<?php namespace AliasProject\WPRoutes;
+<?php namespace AliasProject\WPRoute;
 
-final class Routes
+final class Route
 {
     private $hooked = FALSE;
 	private $routes = array(
@@ -78,7 +78,7 @@ final class Routes
     }
     private function hook(){
     	if(!$this->hooked){
-			add_filter('init', array('WP_Route', 'onInit'), 1, 0);
+			add_filter('init', array('Route', 'onInit'), 1, 0);
 			$this->hooked = TRUE;
 		}
     }

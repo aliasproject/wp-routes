@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "AliasProject\\WPRoutes\\": "src"
+            "AliasProject\\WPRoute\\": "src"
         }
     }
 }
