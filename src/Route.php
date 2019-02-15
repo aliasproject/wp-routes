@@ -78,7 +78,7 @@ final class Route
     }
     private function hook(){
     	if(!$this->hooked){
-			add_filter('init', array('Route', 'onInit'), 1, 0);
+			add_filter('init', array('AliasProject\WPRoute\Route', 'onInit'), 1, 0);
 			$this->hooked = TRUE;
 		}
     }
