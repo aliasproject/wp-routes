@@ -86,12 +86,14 @@ final class Route
     	$r = Self::instance();
     	$r->handle();
     }
-    private function getRouteParams($route){
+
+    private function getRouteParams($route)
+    {
     	$tokenizedRoute		 = $this->tokenize($route);
     	$tokenizedRequestURI = $this->tokenize($this->requestURI());
     	preg_match_all('/\{\s*.+?\s*\}/', $route, $matches);
     	$return = array();
-    	foreach($matches[0] as $key => $match){
+    	foreach($matches[0] as $key => $match) {
     		$search = array_search($match, $tokenizedRoute);
     		if($search !== FALSE){
     			$return[]  = $tokenizedRequestURI[$search];
@@ -121,28 +123,47 @@ final class Route
         $routes              = array_merge($this->routes[$method], $this->routes['ANY']);
     	$requestURI 		 = $this->requestURI();
     	$tokenizedRequestURI = $this->tokenize($requestURI);
+
     	foreach($routes as $key => $route){
     		// First, filter routes that do not have equal tokenized lengths
     		if(count($this->tokenize($route->route)) !== count($tokenizedRequestURI)){
     			unset($routes[$key]);
     			continue;
     		}
-    		// Add more filtering here as routing gets more complex.
+
+            preg_match_all('/\{\s*.+?\s*\}/', $route->route, $matches);
+            $route_uri = explode('/', $route->route);
+
+            $route_params = [];
+            foreach ($route_uri as $route_key => $uri) {
+                if (!in_array($uri, $matches[0])) continue;
+                $route_params[] = $route_key;
+                unset($route_uri[$route_key]);
+            }
+
+            $request_uri_parts = explode('/', $requestURI);
+            foreach ($request_uri_parts as $request_key => $uri_part) {
+                if (in_array($request_key, $route_params)) continue;
+
+                if ($uri_part !== $route_uri[$request_key]) {
+                    unset($routes[$key]);
+                    break;
+                }
+            }
     	}
+
     	$routes = array_values($routes);
-    	if(isset($routes[0])){
+    	if (isset($routes[0])) {
     		$route = $routes[0];
-			if(is_string($route->callable) &&
-			   class_exists($route->callable) &&
-			   is_subclass_of($route->callable, 'WP_AJAX')){
+
+			if (is_string($route->callable) && class_exists($route->callable) && is_subclass_of($route->callable, 'WP_AJAX')) {
 				$callable   = $route->callable;
 				$controller = new $callable;
-				call_user_func_array(array($controller, 'boot'), $this->getRouteParams($route->route));
-			}elseif(isset($routes[0]->redirect)){
+			} else if (isset($routes[0]->redirect)) {
 				$redirect = $routes[0]->redirect;
 				header("Location: {$redirect}", TRUE, $routes[0]->code);
 				die;
-			}else{
+			} else {
 				call_user_func_array($route->callable, $this->getRouteParams($route->route));
 			}
     	}
