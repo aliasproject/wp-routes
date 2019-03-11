@@ -119,7 +119,7 @@ final class Route
 	// handle()
 	// -----------------------------------------------------
     public function handle(){
-        $method              = strtoupper($_SERVER['REQUEST_METHOD']);
+        $method              = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
         $routes              = array_merge($this->routes[$method], $this->routes['ANY']);
     	$requestURI 		 = $this->requestURI();
     	$tokenizedRequestURI = $this->tokenize($requestURI);
